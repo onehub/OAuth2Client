@@ -207,11 +207,14 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 - (void)requestAccessToAccountWithType:(NSString *)accountType username:(NSString *)username
                               password:(NSString *)password
-                               success:(NXOAuth2ClientSuccessBlock)success
-                               failure:(NXOAuth2ClientFailureBlock)failure;
+                               success:(NXOAuth2AccountStoreSuccessBlock)success
+                               failure:(NXOAuth2AccountStoreFailureBlock)failure;
 {
+  self.successBlock = success;
+  self.failureBlock = failure;
+
   NXOAuth2Client *client = [self pendingOAuthClientForAccountType:accountType];
-  [client authenticateWithUsername:username password:password success:success failure:failure];
+  [client authenticateWithUsername:username password:password];
 }
 
 - (void)requestAccessToAccountWithType:(NSString *)accountType assertionType:(NSURL *)assertionType assertion:(NSString *)assertion;
@@ -501,6 +504,13 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
   NXOAuth2Account *account = [[NXOAuth2Account alloc] initAccountWithOAuthClient:client accountType:accountType];
   
   [self addAccount:account];
+
+  if (self.successBlock) {
+    self.successBlock(account);
+  }
+
+  self.successBlock = nil;
+  self.failureBlock = nil;
 }
 
 - (void)addAccount:(NXOAuth2Account *)account;
@@ -545,6 +555,13 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
   NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                             accountType, kNXOAuth2AccountStoreAccountType,
                             error, NXOAuth2AccountStoreErrorKey, nil];
+
+  if (self.failureBlock) {
+    self.failureBlock(error);
+  }
+
+  self.successBlock = nil;
+  self.failureBlock = nil;
   
   [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreDidFailToRequestAccessNotification
                                                       object:self

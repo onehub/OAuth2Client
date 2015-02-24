@@ -41,62 +41,62 @@
 #endif
 
 
-
-extern NSString * const NXOAuth2ConnectionDidStartNotification;
-extern NSString * const NXOAuth2ConnectionDidEndNotification;
+extern NSString *const NXOAuth2ConnectionDidStartNotification;
+extern NSString *const NXOAuth2ConnectionDidEndNotification;
 
 
 typedef void(^NXOAuth2ConnectionResponseHandler)(NSURLResponse *response, NSData *responseData, NSError *error);
+
 typedef void(^NXOAuth2ConnectionSendingProgressHandler)(unsigned long long bytesSend, unsigned long long bytesTotal);
 
 
 @interface NXOAuth2Connection : NSObject {
 @private
-    NSURLConnection        *connection;
-    NSMutableURLRequest    *request;
-    NSURLResponse        *response;
-    NSDictionary        *requestParameters;
-    
-    NSMutableData        *data;
-    BOOL                savesData;
-    
-    id                    context;
-    NSDictionary        *userInfo;
-    
-    NXOAuth2Client        *client;
-    
-    NSObject<NXOAuth2ConnectionDelegate>    *__unsafe_unretained delegate;    // assigned
-    
-    NXOAuth2ConnectionResponseHandler responseHandler;
-    NXOAuth2ConnectionSendingProgressHandler sendingProgressHandler;
-    
-    BOOL                sendConnectionDidEndNotification;
-    
+  NSURLConnection     *connection;
+  NSMutableURLRequest *request;
+  NSURLResponse       *response;
+  NSDictionary        *requestParameters;
+
+  NSMutableData *data;
+  BOOL          savesData;
+
+  id           context;
+  NSDictionary *userInfo;
+
+  NXOAuth2Client *client;
+
+  NSObject <NXOAuth2ConnectionDelegate> *__unsafe_unretained delegate;    // assigned
+
+  NXOAuth2ConnectionResponseHandler        responseHandler;
+  NXOAuth2ConnectionSendingProgressHandler sendingProgressHandler;
+
+  BOOL sendConnectionDidEndNotification;
+
 #if (NXOAuth2ConnectionDebug)
     NSDate *startDate;
 #endif
 }
 
-@property (nonatomic, unsafe_unretained) NSObject<NXOAuth2ConnectionDelegate>    *delegate;
-@property (nonatomic, strong, readonly) NSData *data;
-@property (nonatomic, assign) BOOL savesData;
-@property (nonatomic, assign, readonly) long long expectedContentLength;
-@property (nonatomic, strong, readonly) NSURLResponse *response;
-@property (nonatomic, assign, readonly) NSInteger statusCode;
-@property (nonatomic, strong) id context;
-@property (nonatomic, strong) NSDictionary *userInfo;
-@property (nonatomic, strong, readonly) NXOAuth2Client *client;
-
-- (instancetype) initWithRequest:(NSMutableURLRequest *)request
-               requestParameters:(NSDictionary *)requestParameters
-                     oauthClient:(NXOAuth2Client *)client
-          sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)sendingProgressHandler
-                 responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
+@property (nonatomic, unsafe_unretained) NSObject <NXOAuth2ConnectionDelegate> *delegate;
+@property (nonatomic, strong, readonly) NSData                                 *data;
+@property (nonatomic, assign) BOOL                                             savesData;
+@property (nonatomic, assign, readonly) long long                              expectedContentLength;
+@property (nonatomic, strong, readonly) NSURLResponse                          *response;
+@property (nonatomic, assign, readonly) NSInteger                              statusCode;
+@property (nonatomic, strong) id                                               context;
+@property (nonatomic, strong) NSDictionary                                     *userInfo;
+@property (nonatomic, strong, readonly) NXOAuth2Client                         *client;
 
 - (instancetype)initWithRequest:(NSMutableURLRequest *)request
               requestParameters:(NSDictionary *)requestParameters
                     oauthClient:(NXOAuth2Client *)client
-                       delegate:(NSObject<NXOAuth2ConnectionDelegate> *)delegate;
+         sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)sendingProgressHandler
+                responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
+
+- (instancetype)initWithRequest:(NSMutableURLRequest *)request
+              requestParameters:(NSDictionary *)requestParameters
+                    oauthClient:(NXOAuth2Client *)client
+                       delegate:(NSObject <NXOAuth2ConnectionDelegate> *)delegate;
 
 - (void)cancel;
 

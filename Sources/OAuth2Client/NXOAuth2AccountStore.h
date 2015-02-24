@@ -63,6 +63,8 @@ typedef NXOAuth2TrustMode(^NXOAuth2TrustModeHandler)(NXOAuth2Connection *connect
 typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
 typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 
+typedef void (^NXOAuth2AccountStoreSuccessBlock)(NXOAuth2Account *account);
+typedef void (^NXOAuth2AccountStoreFailureBlock)(NSError *error);
 
 #pragma mark -
 
@@ -79,7 +81,10 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 
 #pragma mark Accessors
 
-@property(nonatomic, strong, readonly) NSArray *accounts;
+@property (nonatomic, strong, readonly) NSArray *accounts;
+@property (nonatomic, copy) NXOAuth2AccountStoreSuccessBlock successBlock;
+@property (nonatomic, copy) NXOAuth2AccountStoreFailureBlock failureBlock;
+
 - (NSArray *)accountsWithAccountType:(NSString *)accountType;
 - (NXOAuth2Account *)accountWithIdentifier:(NSString *)identifier;
 
@@ -133,8 +138,8 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 - (void)requestAccessToAccountWithType:(NSString *)accountType username:(NSString *)username password:(NSString *)password;
 - (void)requestAccessToAccountWithType:(NSString *)accountType username:(NSString *)username
                               password:(NSString *)password
-                               success:(NXOAuth2ClientSuccessBlock)success
-                               failure:(NXOAuth2ClientFailureBlock)failure;
+                               success:(NXOAuth2AccountStoreSuccessBlock)success
+                               failure:(NXOAuth2AccountStoreFailureBlock)failure;
 - (void)requestAccessToAccountWithType:(NSString *)accountType assertionType:(NSURL *)assertionType assertion:(NSString *)assertion;
 - (void)requestClientCredentialsAccessWithType:(NSString *)accountType;
 - (void)addAccount:(NXOAuth2Account *)account;
