@@ -31,32 +31,35 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 
 //TODO: Link to documentation
 
+typedef void (^NXOAuth2ClientSuccessBlock)(NXOAuth2AccessToken *token);
+typedef void (^NXOAuth2ClientFailureBlock)(NSError *error);
+
 @interface NXOAuth2Client : NSObject <NXOAuth2ConnectionDelegate> {
 @protected
-    BOOL authenticating;
-    BOOL persistent;
-
-    NSString    *clientId;
-    NSString    *clientSecret;
-    
-    NSSet       *desiredScope;
-    NSString    *userAgent;
-    NSString    *assertion;
-    NSString    *keyChainGroup;
-    
-    // server information
-    NSURL        *authorizeURL;
-    NSURL        *tokenURL;
-    NSString     *tokenType;
-    
-    // token exchange
-    NXOAuth2Connection    *authConnection;
-    NXOAuth2AccessToken    *accessToken;
-    NSMutableArray    *waitingConnections; //for connections that are waiting for successful authorisation
-    NSInteger        refreshConnectionDidRetryCount;
-    
-    // delegates
-    NSObject<NXOAuth2ClientDelegate>*    __unsafe_unretained delegate;    // assigned
+  BOOL authenticating;
+  BOOL persistent;
+  
+  NSString    *clientId;
+  NSString    *clientSecret;
+  
+  NSSet       *desiredScope;
+  NSString    *userAgent;
+  NSString    *assertion;
+  NSString    *keyChainGroup;
+  
+  // server information
+  NSURL        *authorizeURL;
+  NSURL        *tokenURL;
+  NSString     *tokenType;
+  
+  // token exchange
+  NXOAuth2Connection    *authConnection;
+  NXOAuth2AccessToken    *accessToken;
+  NSMutableArray    *waitingConnections; //for connections that are waiting for successful authorisation
+  NSInteger        refreshConnectionDidRetryCount;
+  
+  // delegates
+  NSObject<NXOAuth2ClientDelegate>*    __unsafe_unretained delegate;    // assigned
 }
 
 @property (nonatomic, readonly, getter = isAuthenticating) BOOL authenticating;
@@ -74,6 +77,9 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 
 @property (nonatomic, strong) NXOAuth2AccessToken    *accessToken;
 @property (nonatomic, unsafe_unretained) NSObject<NXOAuth2ClientDelegate>*    delegate;
+
+@property (nonatomic, copy) NXOAuth2ClientSuccessBlock authSuccessBlock;
+@property (nonatomic, copy) NXOAuth2ClientFailureBlock authFailureBlock;
 
 
 /*!
@@ -130,6 +136,10 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
  */
 - (void)authenticateWithClientCredentials;
 - (void)authenticateWithUsername:(NSString *)username password:(NSString *)password;
+- (void)authenticateWithUsername:(NSString *)username
+                        password:(NSString *)password
+                         success:(NXOAuth2ClientSuccessBlock)success
+                         failure:(NXOAuth2ClientFailureBlock)failure;
 
 /*!
  * Authenticate with assertion (Assertion Flow)

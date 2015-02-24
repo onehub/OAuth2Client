@@ -24,3 +24,7 @@ DerivedData
 # Cocoapods
 #
 Pods
+
+# AppCode
+#
+.idea*
